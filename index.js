@@ -6,13 +6,6 @@ const app = fastify({
   logger: true
 });
 
-// app.get('/', async (req, res) => {  
-//   return {
-//     message: `Welcome to Node Babel with ${
-//       req.body?.testValue ?? 'no testValue' 
-//     }`,
-//   };
-// });
 
 const promise1 = new Promise((resolve => {
   axios.get("https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount=3")
@@ -32,16 +25,22 @@ const promise2 = new Promise((resolve => {
     })
 })).catch(error => resolve(null));
 
-const promise3 = new Promise((resolve => {
-  axios.get("https://date.nager.at/Api/v2/NextPublicHolidays/FR")
+const promise3 = (countryCode) => {
+
+return new Promise((resolve) => {
+  axios.get('https://date.nager.at/Api/v2/NextPublicHolidays/'+ countryCode)
     .then((response) => {
       resolve(response.data);
-    })
-})).catch(error => resolve(null));
+    }).catch(error => resolve(null));
+})
+}
 
-const fetchAsyncData = async () => {
+const fetchAsyncData = async (countryCode) => {
+  const waitp1 = await promise1;
+  const waitp2 = await promise2;
+  const waitp3 = await promise3(countryCode);
   let tab = {}
-  return Promise.all([promise1, promise2, promise3]).then(res => {
+  return Promise.all([waitp1, waitp2, waitp3]).then(res => {
     tab['foxPicture'] = res[1];
     tab['catFacts'] = res[0];
     tab['holidays'] = res[2];
@@ -49,9 +48,9 @@ const fetchAsyncData = async () => {
   })
 }
 
-//API CAT
-app.get('/', async () => {
-  return fetchAsyncData();
+//POST
+app.post('/', async (request, res) => {
+  return fetchAsyncData(request.body.countryCode);
 });
 
 // Run the server!
