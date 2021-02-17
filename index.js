@@ -6,7 +6,7 @@ const app = fastify({
   logger: true
 });
 
-
+//REQUETE CHAT
 const promise1 = new Promise((resolve => {
   axios.get("https://cat-fact.herokuapp.com/facts/random?animal_type=cat&amount=3")
     .then((response) => {
@@ -18,6 +18,7 @@ const promise1 = new Promise((resolve => {
     })
 })).catch(error => resolve(null));
 
+//REQUETE RENARD
 const promise2 = new Promise((resolve => {
   axios.get("https://randomfox.ca/floof/")
     .then((response) => {
@@ -25,6 +26,7 @@ const promise2 = new Promise((resolve => {
     })
 })).catch(error => resolve(null));
 
+//REQUETE VACANCES
 const promise3 = (countryCode) => {
 
 return new Promise((resolve) => {
@@ -34,7 +36,7 @@ return new Promise((resolve) => {
     }).catch(error => resolve(null));
 })
 }
-
+//AFFICHAGE
 const fetchAsyncData = async (countryCode) => {
   const waitp1 = await promise1;
   const waitp2 = await promise2;
